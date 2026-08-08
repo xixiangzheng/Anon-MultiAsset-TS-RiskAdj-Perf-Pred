@@ -1,0 +1,57 @@
+{
+  "competition": "quantcontest2026",
+  "version": "public_release_20260630",
+  "description": "Public participant data manifest. Real timestamps, symbols, raw feature names, internal labels, and target construction details are intentionally omitted.",
+  "files": {
+    "train": [
+      "train/train_partition_000.parquet",
+      "train/train_partition_001.parquet",
+      "train/train_partition_002.parquet",
+      "train/train_partition_003.parquet",
+      "train/train_partition_004.parquet",
+      "train/train_partition_005.parquet",
+      "train/train_partition_006.parquet",
+      "train/train_partition_007.parquet",
+      "train/train_partition_008.parquet"
+    ],
+    "test": [
+      "test/test_partition_000.parquet",
+      "test/test_partition_001.parquet",
+      "test/test_partition_002.parquet"
+    ],
+    "sample_submission": "sample_submission.csv"
+  },
+  "rows": {
+    "train": 13227692,
+    "test": 3217458
+  },
+  "counts": {
+    "n_assets": 15,
+    "feature_count": 323,
+    "responder_count": 47
+  },
+  "columns": {
+    "index": [
+      "row_id",
+      "time_id",
+      "asset_id"
+    ],
+    "train_extra": [
+      "weight",
+      "responder_*",
+      "target"
+    ],
+    "test_extra": [],
+    "features": "feature_000 ... feature_xxx"
+  },
+  "format": {
+    "container": "parquet",
+    "compression": "zstd",
+    "float_dtype": "float32",
+    "index_columns": {
+      "row_id": "int64",
+      "time_id": "int64",
+      "asset_id": "int8"
+    }
+  }
+}

@@ -1,0 +1,28 @@
+# ===== 数据（巨大 / 可重生）=====
+# 赛事 parquet 分区数据（train/test，约 20GB）
+*.parquet
+# 示例提交文件（62MB 随机数，仅格式参考）
+public_release_20260630/data/sample_submission.csv
+# 缓存 / 中间数据
+data/cache/
+*.cache
+*.feather
+
+# ===== 训练产物（模型权重，可重生）=====
+model/
+*.log
+
+# ===== Python =====
+venv/
+.venv/
+env/
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# ===== 临时 / 系统 =====
+.DS_Store
+*.swp
+*.tmp
+*.bak
