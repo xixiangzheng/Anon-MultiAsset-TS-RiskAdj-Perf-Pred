@@ -26,3 +26,6 @@ __pycache__/
 *.swp
 *.tmp
 *.bak
+
+# ===== 提交文件（可重生，不入库）=====
+submissions/
