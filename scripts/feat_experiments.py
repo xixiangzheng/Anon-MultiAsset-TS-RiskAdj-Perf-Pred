@@ -87,7 +87,7 @@ def build_volatility(frame, feats, window):
         cs2 = np.vstack([np.zeros((1, grp.shape[1])), np.cumsum(grp * grp, axis=0)])
         offs = np.arange(e - s)
         ws = np.maximum(0, offs + 1 - window)
-        n = offs + 1 - ws
+        n = (offs + 1 - ws).reshape(-1, 1)
         mean = (cs[offs + 1] - cs[ws]) / n
         e2 = (cs2[offs + 1] - cs2[ws]) / n
         var = np.maximum(e2 - mean * mean, 0.0)
