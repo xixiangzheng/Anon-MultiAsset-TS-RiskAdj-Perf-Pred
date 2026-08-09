@@ -92,3 +92,12 @@ train.py --release-root /tmp/lgbm_tinydata --model-dir /tmp/lgbm_baseline_smoke 
 1. 利用 47 个 responder 做多任务/去噪目标（baseline 完全未用，最大低垂果实）
 2. 扩展因果历史特征（更长窗口、跨标的、波动率/比值类）
 3. 认真调参 + LGBM/神经网络集成/stacking
+
+## 7. 公榜实盘结果（2026-08-09）
+
+提交 `submissions/lgbm_full_submission.csv`，公榜得分 **0.00313173**，位次 **71**。
+
+- **实盘比 holdout 估计（0.001778）高 ~76%** → 模型泛化扎实，purged CV / 门禁经受住实盘检验
+- 全场分数压缩在 0.003~0.005（榜首 ~0.0052），弱信号赛题，无人一骑绝尘
+- 注：所截榜单为**部分**（rank 71 非末位，下方还有队伍）；位次显得靠后主因是分布极度压缩，非分数差
+- **锚点**：baseline 公榜 0.00313 / rank 71；后续改进以 Δ 对照此基准
