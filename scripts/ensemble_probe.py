@@ -65,11 +65,7 @@ def main():
                       reg_lambda=10.0, tree_method="hist", nthread=16, seed=SEED, verbosity=0)
 
     def xgb_wr2(preds, dtrain):
-        yy = dtrain.get_label()
-        ww = dtrain.get_weight()
-        if ww is None: ww = np.ones_like(yy)
-        d = float(np.sum(ww * yy * yy)); s = 0.0 if d <= 0 else 1 - float(np.sum(ww * (yy - preds) ** 2) / d)
-        return ("wr2", float(s))
+        return ("wr2", float("nan"))  # 占位，xgb 3.x 不用 feval
 
     for k, f in enumerate(plan.folds):
         tr = np.isin(tids, list(map(int, f.train_time_ids)))
@@ -81,10 +77,10 @@ def main():
                       feval=lgb_feval, callbacks=[lgb.early_stopping(40, verbose=False), lgb.log_evaluation(0)])
         bi = m.best_iteration or 250
         oof_lgb[va] = m.predict(X[va], num_iteration=bi)
-        # XGB
+        # XGB（默认 rmse early stop）
         dtr_x = xgb.DMatrix(X[tr], label=y[tr], weight=w[tr], feature_names=feat_names)
         dva_x = xgb.DMatrix(X[va], label=y[va], weight=w[va], feature_names=feat_names)
-        mx = xgb.train(xgb_params, dtr_x, num_boost_round=250, evals=[(dva_x, "va")], feval=xgb_wr2,
+        mx = xgb.train(xgb_params, dtr_x, num_boost_round=250, evals=[(dva_x, "va")],
                        early_stopping_rounds=40, verbose_eval=False)
         oof_xgb[va] = mx.predict(dva_x, iteration_range=(0, mx.best_iteration + 1))
         mask[va] = True
