@@ -61,7 +61,7 @@ def run_cb(Xtr, ytr, wtr, Xva, yva, wva, seed):
     # CatBoost: asset_id(列0)为类别，需 int 型 DataFrame
     p = dict(loss_function="RMSE", learning_rate=0.05, depth=8, l2_leaf_reg=10.0,
             iterations=250, random_seed=seed, thread_count=16, verbose=False,
-            early_stopping_rounds=40, od_type="Iter", od_wait=40, use_best_model=True)
+            early_stopping_rounds=40, use_best_model=True)
     dftr = pd.DataFrame(Xtr); dftr[0] = dftr[0].astype(np.int32)
     dfva = pd.DataFrame(Xva); dfva[0] = dfva[0].astype(np.int32)
     trpool = cb.Pool(dftr, label=ytr, weight=wtr, cat_features=[0])
