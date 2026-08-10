@@ -19,7 +19,7 @@ if STRAT not in sys.path:
 from data_utils import manifest_files, feature_columns_from_path  # noqa: E402
 
 XGB_PARAMS = dict(tree_method="hist", device="cuda", objective="reg:squarederror",
-                  learning_rate=0.05, max_depth=8, min_child_weight=5,
+                  learning_rate=0.03, max_depth=8, min_child_weight=5,
                   subsample=0.8, colsample_bytree=0.8, reg_lambda=3.0, verbosity=0)
 SEEDS = (2026, 2027, 2028)
 MAX_ITERS = 800
@@ -69,7 +69,7 @@ def main():
     dtr, dva = dmat(train_df), dmat(valid_df)
     p = dict(XGB_PARAMS); p["seed"] = 2026
     m = xgb.train(p, dtr, num_boost_round=MAX_ITERS, evals=[(dva, "va")],
-                  early_stopping_rounds=50, verbose_eval=False)
+                  early_stopping_rounds=100, verbose_eval=False)
     bi = m.best_iteration + 1
     print(f"[holdout] best_iter={bi}  holdout_wr2={wr2(dva.get_label(), m.predict(dva), dva.get_weight()):+.6f}", flush=True)
 
