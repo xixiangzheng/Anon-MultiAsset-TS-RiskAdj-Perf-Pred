@@ -73,7 +73,11 @@ def main():
             loss=(Wt[idx]*(m(Xt[idx],At[idx])-Yt[idx])**2).mean()
             loss.backward(); opt.step(); tot+=loss.item()*len(idx)
         m.eval()
-        with torch.no_grad(): r2=wr2_np(yv, m(Xv,Av).cpu().numpy(), wv)
+        with torch.no_grad():
+            ps = []
+            for i in range(0, len(Xv), 8192):
+                ps.append(m(Xv[i:i+8192], Av[i:i+8192]).cpu().numpy())
+            r2 = wr2_np(yv, np.concatenate(ps), wv)
         print(f"ep{ep} loss={tot/n_tr:.6f} holdout={r2:+.5f} ({time.time()-t0:.0f}s) best={best:+.5f}", flush=True)
         if r2>best: best=r2; bad=0
         else:
