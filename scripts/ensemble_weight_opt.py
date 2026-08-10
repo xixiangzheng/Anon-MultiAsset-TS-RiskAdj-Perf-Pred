@@ -90,9 +90,9 @@ def main():
     Atr=torch.from_numpy(tr_df["asset_id"].to_numpy(np.int64)).to(DEV); Ava=torch.from_numpy(va_df["asset_id"].to_numpy(np.int64)).to(DEV)
     Ytr=torch.from_numpy(ytr).to(DEV); Wtr=torch.from_numpy(wtr).to(DEV)
     bs=16384; n_tr=len(Xtr_s)
-    for name,in_drop,seed in [("nn1",0.0,2026),("nn2",0.5,2027)]:
+    for name,in_drop,seed,kw in [("nn1",0.0,2026,{}),("nn2",0.5,2027,{}),("nn3_emb32",0.0,2028,{"emb_dim":32}),("nn4_deep4",0.0,2029,{"hidden":(256,256,256,256)})]:
         print(f"train {name}...", flush=True); t0=time.time()
-        torch.manual_seed(seed); m=MLP(len(feats),in_drop=in_drop).to(DEV)
+        torch.manual_seed(seed); m=MLP(len(feats),in_drop=in_drop,**kw).to(DEV)
         opt=torch.optim.Adam(m.parameters(),lr=1e-3,weight_decay=1e-5); m.train(); perm=torch.randperm(n_tr,device=DEV)
         for i in range(0,n_tr,bs):
             idx=perm[i:i+bs]; opt.zero_grad(); loss=(Wtr[idx]*(m(Xtr_s[idx],Atr[idx])-Ytr[idx])**2).mean(); loss.backward(); opt.step()
