@@ -90,17 +90,20 @@ def main():
     Atr=torch.from_numpy(tr_df["asset_id"].to_numpy(np.int64)).to(DEV); Ava=torch.from_numpy(va_df["asset_id"].to_numpy(np.int64)).to(DEV)
     Ytr=torch.from_numpy(ytr).to(DEV); Wtr=torch.from_numpy(wtr).to(DEV)
     bs=16384; n_tr=len(Xtr_s)
-    for name,in_drop,seed,kw in [("nn1",0.0,2026,{}),("nn2",0.5,2027,{}),("nn3_emb32",0.0,2028,{"emb_dim":32}),("nn4_deep4",0.0,2029,{"hidden":(256,256,256,256)})]:
-        print(f"train {name}...", flush=True); t0=time.time()
-        torch.manual_seed(seed); m=MLP(len(feats),in_drop=in_drop,**kw).to(DEV)
-        opt=torch.optim.Adam(m.parameters(),lr=1e-3,weight_decay=1e-5); m.train(); perm=torch.randperm(n_tr,device=DEV)
-        for i in range(0,n_tr,bs):
-            idx=perm[i:i+bs]; opt.zero_grad(); loss=(Wtr[idx]*(m(Xtr_s[idx],Atr[idx])-Ytr[idx])**2).mean(); loss.backward(); opt.step()
-        m.eval()
-        with torch.no_grad():
-            ps=[]
-            for i in range(0,len(Xva_s),16384): ps.append(m(Xva_s[i:i+16384],Ava[i:i+16384]).cpu().numpy())
-            oofs[name]=np.concatenate(ps)
+    for name,in_drop,seeds,kw in [("nn1",0.0,list(range(2026,2036)),{}),("nn2",0.5,[2027],{}),("nn3_emb32",0.0,[2028],{"emb_dim":32}),("nn4_deep4",0.0,[2029],{"hidden":(256,256,256,256)})]:
+        print(f"train {name} ({len(seeds)} seeds)...", flush=True); t0=time.time()
+        acc=[]
+        for sd in seeds:
+            torch.manual_seed(sd); m=MLP(len(feats),in_drop=in_drop,**kw).to(DEV)
+            opt=torch.optim.Adam(m.parameters(),lr=1e-3,weight_decay=1e-5); m.train(); perm=torch.randperm(n_tr,device=DEV)
+            for i in range(0,n_tr,bs):
+                idx=perm[i:i+bs]; opt.zero_grad(); loss=(Wtr[idx]*(m(Xtr_s[idx],Atr[idx])-Ytr[idx])**2).mean(); loss.backward(); opt.step()
+            m.eval()
+            with torch.no_grad():
+                ps=[]
+                for i in range(0,len(Xva_s),16384): ps.append(m(Xva_s[i:i+16384],Ava[i:i+16384]).cpu().numpy())
+                acc.append(np.concatenate(ps))
+        oofs[name]=np.mean(acc,axis=0)
         print(f"  {name} R²={wr2(yv,oofs[name],wv):+.5f} ({time.time()-t0:.0f}s)", flush=True)
 
     keys=list(oofs); P=np.array([oofs[k] for k in keys])  # [n_models, n_holdout]
@@ -122,7 +125,7 @@ def main():
 
     # 套用到 test 预测(已存的 submissions)
     S=Path("/mnt/iscsi/hd/xxz/submissions")
-    tmap={"lgb":"lgbm_full_submission","cb":"cb_submission","xgb":"xgb_submission","nn1":"nn_submission","nn2":"nn2_submission"}
+    tmap={"lgb":"lgbm_full_submission","cb":"cb_submission","xgb":"xgb_submission","nn1":"nn1_10s","nn2":"nn2_submission","nn3_emb32":"nnvar_emb32","nn4_deep4":"nnvar_deep4"}
     base=pd.read_csv(S/f"{tmap[keys[0]]}.csv").sort_values("row_id").reset_index(drop=True)
     T=np.array([pd.read_csv(S/f"{tmap[k]}.csv").sort_values("row_id")["target"].to_numpy() for k in keys])
     # NN 去均值(它们偏负)，用 lgb 均值对齐
