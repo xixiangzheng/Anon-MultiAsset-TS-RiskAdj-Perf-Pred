@@ -137,6 +137,11 @@ def main():
     print(f"\nwrote ensemble_opt.csv weights={[round(float(x),3) for x in w]} mean={pred.mean():+.4f}", flush=True)
     json.dump({"weights":{k:float(wi) for k,wi in zip(keys,w)},"holdout_r2":float(wr2(yv,w@P,wv))},
               open("/mnt/iscsi/hd/xxz/runs/ensemble_opt_weights.json","w"), indent=2)
+    # 保存 OOF 供元学习器stacking
+    import pickle
+    pickle.dump({"keys":keys,"oofs":oofs,"yv":yv,"wv":wv,"tids_holdout":va_df["time_id"].to_numpy()},
+                open("/mnt/iscsi/hd/xxz/runs/oof_all.pkl","wb"))
+    print("saved OOF to runs/oof_all.pkl", flush=True)
 
 
 if __name__=="__main__":
