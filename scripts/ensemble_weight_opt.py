@@ -90,7 +90,7 @@ def main():
     Atr=torch.from_numpy(tr_df["asset_id"].to_numpy(np.int64)).to(DEV); Ava=torch.from_numpy(va_df["asset_id"].to_numpy(np.int64)).to(DEV)
     Ytr=torch.from_numpy(ytr).to(DEV); Wtr=torch.from_numpy(wtr).to(DEV)
     bs=16384; n_tr=len(Xtr_s)
-    for name,in_drop,seeds,kw in [("nn1",0.0,list(range(2026,2036)),{}),("nn2",0.5,[2027],{}),("nn3_emb32",0.0,[2028],{"emb_dim":32}),("nn4_deep4",0.0,[2029],{"hidden":(256,256,256,256)})]:
+    for name,in_drop,seeds,kw in [("nn1",0.0,list(range(2026,2036)),{}),("nn2",0.5,[2027],{}),("nn3_emb32",0.0,list(range(2026,2036)),{"emb_dim":32}),("nn4_deep4",0.0,[2029],{"hidden":(256,256,256,256)})]:
         print(f"train {name} ({len(seeds)} seeds)...", flush=True); t0=time.time()
         acc=[]
         for sd in seeds:
@@ -125,7 +125,7 @@ def main():
 
     # 套用到 test 预测(已存的 submissions)
     S=Path("/mnt/iscsi/hd/xxz/submissions")
-    tmap={"lgb":"lgbm_full_submission","cb":"cb_submission","xgb":"xgb_submission","nn1":"nn1_10s","nn2":"nn2_submission","nn3_emb32":"nnvar_emb32","nn4_deep4":"nnvar_deep4"}
+    tmap={"lgb":"lgbm_full_submission","cb":"cb_submission","xgb":"xgb_submission","nn1":"nn1_10s","nn2":"nn2_submission","nn3_emb32":"nn3_10s","nn4_deep4":"nnvar_deep4"}
     base=pd.read_csv(S/f"{tmap[keys[0]]}.csv").sort_values("row_id").reset_index(drop=True)
     T=np.array([pd.read_csv(S/f"{tmap[k]}.csv").sort_values("row_id")["target"].to_numpy() for k in keys])
     # NN 去均值(它们偏负)，用 lgb 均值对齐
