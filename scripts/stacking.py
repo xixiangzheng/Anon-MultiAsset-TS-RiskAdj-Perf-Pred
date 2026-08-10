@@ -35,7 +35,8 @@ def main():
     dtr=lgb.Dataset(Ptr.T,label=ytr,weight=wtr,free_raw_data=False)
     dva=lgb.Dataset(Pev.T,label=yev,weight=wev,reference=dtr,free_raw_data=False)
     def feval(p,ds):
-        yy=ds.get_label(); ww=ds.get_weight() or np.ones_like(yy)
+        yy=ds.get_label(); ww=ds.get_weight()
+        if ww is None: ww=np.ones_like(yy)
         dd=float(np.sum(ww*yy*yy)); s=0 if dd<=0 else 1-float(np.sum(ww*(yy-p)**2)/dd)
         return ("wr2",float(s),True)
     mm=lgb.train(dict(objective="regression",metric="None",learning_rate=0.05,num_leaves=15,min_data_in_leaf=5000,
