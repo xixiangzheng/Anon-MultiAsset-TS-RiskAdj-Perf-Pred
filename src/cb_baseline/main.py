@@ -19,7 +19,11 @@ class Model:
         model_files = list(report.get("model_files") or [])
         if not model_files:
             model_files = sorted(p.name for p in model_dir.glob("model_seed*.cbm"))
-        self.models = [cb.CatBoost(); self.models[-1].load_model(str(model_dir / mf)) for mf in model_files]
+        self.models = []
+        for mf in model_files:
+            m = cb.CatBoost()
+            m.load_model(str(model_dir / mf))
+            self.models.append(m)
         self.last_time_id = None
 
     def predict(self, test):
