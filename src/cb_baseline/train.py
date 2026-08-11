@@ -20,8 +20,8 @@ if STRAT not in sys.path:
 
 from data_utils import manifest_files, feature_columns_from_path  # noqa: E402
 
-CB_PARAMS = dict(loss_function="RMSE", learning_rate=0.0287, depth=7, l2_leaf_reg=4.28,
-                 bagging_temperature=0.65, random_seed=2026, verbose=False, early_stopping_rounds=50,
+CB_PARAMS = dict(loss_function="RMSE", learning_rate=0.05, depth=8, l2_leaf_reg=3.0,
+                 random_seed=2026, verbose=False, early_stopping_rounds=50,
                  use_best_model=True, task_type="GPU", devices="0", gpu_ram_part=0.45)
 SEEDS = (2026, 2027, 2028)
 MAX_ITERS = 800
