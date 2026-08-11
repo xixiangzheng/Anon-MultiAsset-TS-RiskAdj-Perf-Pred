@@ -69,12 +69,14 @@ def main():
     for ep in range(15):
         m.train(); t0=time.time(); tot=0; cnt=0
         for a in assets:
-            x,y,w,_=G[a]
+            x,y,w,v=G[a]
             x4=x.unsqueeze(0).transpose(1,2)  # [1, n_feat, T]
             opt.zero_grad()
             p=m(x4,torch.tensor(a,device=DEV))
-            loss=(w*(p-y)**2).mean(); loss.backward(); opt.step()
-            tot+=loss.item()*len(y); cnt+=len(y)
+            trm=~v.bool()  # 只在非holdout上算loss(防泄露!)
+            loss=(w*trm*(p-y)**2).sum()/(trm.sum()*w[trm].mean().clamp(min=1e-8)) if trm.any() else (p*0).sum()
+            loss.backward(); opt.step()
+            tot+=loss.item()*trm.sum().item(); cnt+=trm.sum().item()
         m.eval()
         ys=[];ps=[];ws=[]
         with torch.no_grad():
