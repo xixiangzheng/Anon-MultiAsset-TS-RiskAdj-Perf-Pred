@@ -46,10 +46,11 @@ class FTTransformer(nn.Module):
 
 def main():
     paths = manifest_files(DATA_ROOT, "train")[:3]  # 3分区
-    feats = feature_columns_from_path(paths[0])
+    sel = json.load(open("/mnt/iscsi/hd/xxz/runs/top100_features.json"))["sel_features"][:50]  # top-50(减token)
+    feats = sel
     pf = pd.read_parquet(paths, columns=["time_id", "asset_id", "weight", "target"] + feats)
     pf[feats] = np.nan_to_num(pf[feats].to_numpy(np.float32))
-    print(f"loaded {len(pf):,} rows, {len(feats)} feats", flush=True)
+    print(f"loaded {len(pf):,} rows, {len(feats)} feats (top-50)", flush=True)
     times = np.sort(pf["time_id"].unique()); ho = set(times[-max(1, int(len(times)*0.15)):].tolist())
     is_va = pf["time_id"].isin(ho).to_numpy(); tr, va = pf[~is_va].reset_index(drop=True), pf[is_va].reset_index(drop=True)
     mean = tr[feats].to_numpy(np.float32).mean(0); std = tr[feats].to_numpy(np.float32).std(0) + 1e-6
@@ -64,10 +65,10 @@ def main():
     Ytr = torch.from_numpy(ytr).to(DEV); Wtr = torch.from_numpy(wtr).to(DEV)
 
     torch.manual_seed(2026)
-    m = FTTransformer(len(feats)).to(DEV)
+    m = FTTransformer(len(feats), d=64, nhead=8, nlayer=2, ff=256, dropout=0.2).to(DEV)  # 2层(减计算)
     n_params = sum(p.numel() for p in m.parameters())
     print(f"FT-Transformer params: {n_params:,}", flush=True)
-    bs = 4096; n_tr = len(Xt); n_batch = (n_tr + bs - 1) // bs
+    bs = 8192; n_tr = len(Xt); n_batch = (n_tr + bs - 1) // bs
     epochs = 20; warmup = 2; lr0 = 1e-4
     opt = torch.optim.AdamW(m.parameters(), lr=lr0, weight_decay=1e-4)
     def lr_at(ep):
