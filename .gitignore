@@ -29,4 +29,9 @@ __pycache__/
 
 # ===== 提交文件（可重生，不入库）=====
 submissions/
-catboost_info/
+**/catboost_info/
+
+# ===== 12-Aug: 实验输出大文件 =====
+runs/*.pkl
+runs/*.pkl.* 
+*.oof

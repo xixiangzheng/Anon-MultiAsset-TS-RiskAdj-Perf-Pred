@@ -1,0 +1,25 @@
+{
+  "three_way": [
+    {
+      "type": "ratio_mul",
+      "ratio_idx": 16,
+      "numer": "feature_076",
+      "denom": "feature_157",
+      "third": "feature_135",
+      "base_corr": 0.031741104578160956,
+      "new_corr": 0.033747608312638205,
+      "delta": 0.0020065037344772496
+    },
+    {
+      "type": "ratio_mul",
+      "ratio_idx": 14,
+      "numer": "feature_078",
+      "denom": "feature_157",
+      "third": "feature_305",
+      "base_corr": 0.031802031479441245,
+      "new_corr": 0.03380363283962883,
+      "delta": 0.0020016013601875868
+    }
+  ],
+  "n_significant": 2
+}
