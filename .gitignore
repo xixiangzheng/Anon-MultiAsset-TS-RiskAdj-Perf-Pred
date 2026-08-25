@@ -35,3 +35,4 @@ submissions/
 runs/*.pkl
 runs/*.pkl.* 
 *.oof
+public_release_20260823*
