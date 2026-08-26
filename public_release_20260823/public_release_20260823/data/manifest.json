@@ -1,0 +1,44 @@
+{
+  "competition": "quantcontest2026",
+  "version": "public_release_20260823",
+  "description": "Public label-backfill package for the original public test window. Only train-format rows are included; real timestamps, symbols, raw feature names, and target construction details are intentionally omitted.",
+  "files": {
+    "train": [
+      "train/train_partition_000.parquet",
+      "train/train_partition_001.parquet",
+      "train/train_partition_002.parquet"
+    ]
+  },
+  "rows": {
+    "train": 3217458
+  },
+  "counts": {
+    "n_assets": 15,
+    "feature_count": 323,
+    "responder_count": 47
+  },
+  "columns": {
+    "index": [
+      "row_id",
+      "time_id",
+      "asset_id"
+    ],
+    "train_extra": [
+      "weight",
+      "responder_*",
+      "target"
+    ],
+    "test_extra": [],
+    "features": "feature_000 ... feature_xxx"
+  },
+  "format": {
+    "container": "parquet",
+    "compression": "zstd",
+    "float_dtype": "float32",
+    "index_columns": {
+      "row_id": "int64",
+      "time_id": "int64",
+      "asset_id": "int8"
+    }
+  }
+}
