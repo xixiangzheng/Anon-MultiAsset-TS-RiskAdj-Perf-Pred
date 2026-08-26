@@ -88,10 +88,10 @@ def main():
     print(f"config: denom_idx={denom_idx} hi_pct={hi_pct:.4g} lgb_iter={cfg['lgb_best_iter']}")
 
     # 4. requirements.txt（只列真正需要的）
-    reqs = """lightgbm==4.6.0
-catboost==1.2.8
+    reqs = """lightgbm==4.7.0
+catboost==1.2.10
 torch==2.13.0
-numpy==2.2.6
+numpy==1.26.4
 pandas==2.2.3
 """
     (SUBMIT / "requirements.txt").write_text(reqs)
